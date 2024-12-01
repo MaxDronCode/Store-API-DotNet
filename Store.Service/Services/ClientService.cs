@@ -6,7 +6,7 @@ public interface IClientService
 {
     Client AddClient(Client client);
 
-    Client? GetClientByNif(string nif);
+    Task<Client?> GetClientByNif(string nif);
 
     IEnumerable<Client> GetClients();
 

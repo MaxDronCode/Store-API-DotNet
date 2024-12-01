@@ -6,7 +6,7 @@ public interface IClientRepository
 {
     ClientEntity AddClient(ClientEntity client);
 
-    ClientEntity? GetClientByNif(string nif);
+    Task<ClientEntity?> GetClientByNif(string nif);
 
     IEnumerable<ClientEntity> GetClients();
 
