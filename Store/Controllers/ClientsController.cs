@@ -11,10 +11,12 @@ namespace Store.Api.Controllers;
 public class ClientsController : ControllerBase
 {
     private readonly IClientService _clientService;
+    private readonly ILogger<ClientsController> _logger;
 
-    public ClientsController(IClientService clientService)
+    public ClientsController(IClientService clientService, ILogger<ClientsController> logger)
     {
         _clientService = clientService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -29,8 +31,11 @@ public class ClientsController : ControllerBase
     [HttpGet("{nif}")]
     public async Task<IActionResult> GetClient(string nif)
     {
+        _logger.LogInformation("Request for obtaining client with NIF {Nif}", nif);
+
         if (!IsValidNif(nif))
         {
+            _logger.LogWarning("Invalid NIF recieved: {Nif}.", nif);
             return BadRequest("Invalid NIF format.");
         }
         try
@@ -38,13 +43,15 @@ public class ClientsController : ControllerBase
             var client = await _clientService.GetClientByNif(nif);
             if (client == null)
             {
+                _logger.LogInformation("Client with NIF {Nif} not found.", nif);
                 return NotFound("Client not found");
             }
             var responseDto = ClientMappings.ToResponseDto(client);
             return Ok(responseDto);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "Error obtaining client with NIF {Nif}", nif);
             return StatusCode(500, new { message = "An error occured during the request." });
         }
     }
