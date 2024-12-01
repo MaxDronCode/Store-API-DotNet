@@ -20,9 +20,10 @@ public class ClientService : IClientService
         return ClientMappings.ToDomainModel(addedEntity);
     }
 
-    public Client? GetClientByNif(string nif)
+    public async Task<Client?> GetClientByNif(string nif)
     {
-        return ClientMappings.ToDomainModel(_clientRepository.GetClientByNif(nif));
+        var clientEntity = await _clientRepository.GetClientByNif(nif);
+        return clientEntity != null ? ClientMappings.ToDomainModel(clientEntity) : null;
     }
 
     public IEnumerable<Client> GetClients()
