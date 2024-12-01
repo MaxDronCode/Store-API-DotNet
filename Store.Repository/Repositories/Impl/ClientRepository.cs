@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Store.Repository.DbConfig;
 using Store.Repository.Exceptions;
 using Store.Repository.Models;
@@ -8,10 +9,12 @@ namespace Store.Repository.Repositories.Impl;
 public class ClientRepository : IClientRepository
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<ClientRepository> _logger;
 
-    public ClientRepository(AppDbContext context)
+    public ClientRepository(AppDbContext context, ILogger<ClientRepository> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public ClientEntity AddClient(ClientEntity client)
@@ -29,6 +32,7 @@ public class ClientRepository : IClientRepository
         }
         catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while trying to get client by NIF {Nif}", nif);
             throw new DataAccessException("Error while trying to get client by NIF", e);
         }
     }
