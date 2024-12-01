@@ -1,12 +1,13 @@
-﻿using Store.Repository.Models;
+﻿using Store.Repository.DbConfig;
+using Store.Repository.Models;
 
 namespace Store.Repository.Repositories.Impl;
 
 public class ClientRepository : IClientRepository
 {
-    private readonly StoreDbContext _context;
+    private readonly AppDbContext _context;
 
-    public ClientRepository(StoreDbContext context)
+    public ClientRepository(AppDbContext context)
     {
         _context = context;
     }

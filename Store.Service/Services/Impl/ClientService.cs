@@ -8,6 +8,11 @@ public class ClientService : IClientService
 {
     private readonly IClientRepository _clientRepository;
 
+    public ClientService(IClientRepository clientRepository)
+    {
+        _clientRepository = clientRepository;
+    }
+
     public Client AddClient(Client client)
     {
         var entity = ClientMappings.ToEntity(client);

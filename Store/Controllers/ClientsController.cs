@@ -41,4 +41,36 @@ public class ClientsController : ControllerBase
         var responseDto = ClientMappings.ToResponseDto(client);
         return Ok(responseDto);
     }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<ClientResponseDto>> GetClients()
+    {
+        var clients = _clientService.GetClients();
+        var responseDtos = clients.Select(ClientMappings.ToResponseDto);
+        return Ok(responseDtos);
+    }
+
+    [HttpPut("{nif}")]
+    public ActionResult UpdateClient(string nif, ClientRequestDto clientDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        if (nif != clientDto.Nif)
+        {
+            return BadRequest("Nif provided and client nif doesn't match.");
+        }
+        var client = ClientMappings.ToDomainModel(clientDto);
+        var updatedClient = _clientService.UpdateClient(client);
+        var responseDto = ClientMappings.ToResponseDto(updatedClient);
+        return Ok(responseDto);
+    }
+
+    [HttpDelete("{nif}")]
+    public IActionResult RemoveClient(string nif)
+    {
+        _clientService.RemoveClient(nif);
+        return NoContent();
+    }
 }
