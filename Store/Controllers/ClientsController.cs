@@ -19,11 +19,6 @@ public class ClientsController : ControllerBase
     [HttpPost]
     public IActionResult CreateClient(ClientRequestDto clientDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var client = ClientMappings.ToDomainModel(clientDto);
         var createdClient = _clientService.AddClient(client);
         var responseDto = ClientMappings.ToResponseDto(createdClient);
@@ -53,10 +48,6 @@ public class ClientsController : ControllerBase
     [HttpPut("{nif}")]
     public ActionResult UpdateClient(string nif, ClientRequestDto clientDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
         if (nif != clientDto.Nif)
         {
             return BadRequest("Nif provided and client nif doesn't match.");
