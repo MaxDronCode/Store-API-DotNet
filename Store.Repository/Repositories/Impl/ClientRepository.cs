@@ -26,7 +26,7 @@ public class ClientRepository : IClientRepository
 
     public IEnumerable<ClientEntity> GetClients()
     {
-        throw new NotImplementedException();
+        return _context.Clients;
     }
 
     public void RemoveClient(string nif)

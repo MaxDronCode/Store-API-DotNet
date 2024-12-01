@@ -22,13 +22,12 @@ public class ClientService : IClientService
 
     public Client? GetClientByNif(string nif)
     {
-        var entity = _clientRepository.GetClientByNif(nif);
-        return entity is null ? null : ClientMappings.ToDomainModel(entity);
+        return ClientMappings.ToDomainModel(_clientRepository.GetClientByNif(nif));
     }
 
     public IEnumerable<Client> GetClients()
     {
-        throw new NotImplementedException();
+        return _clientRepository.GetClients().Select(ClientMappings.ToDomainModel);
     }
 
     public void RemoveClient(string nif)

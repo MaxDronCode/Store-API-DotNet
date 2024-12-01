@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using Store.Api.Mappings;
 using Store.API.Models;
 using Store.Service.Services;
@@ -26,15 +27,26 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet("{nif}")]
-    public IActionResult GetClient(string nif)
+    public async Task<IActionResult> GetClient(string nif)
     {
-        var client = _clientService.GetClientByNif(nif);
-        if (client == null)
+        if (!IsValidNif(nif))
         {
-            return NotFound();
+            return BadRequest("Invalid NIF format.");
         }
-        var responseDto = ClientMappings.ToResponseDto(client);
-        return Ok(responseDto);
+        try
+        {
+            var client = await _clientService.GetClientByNif(nif);
+            if (client == null)
+            {
+                return NotFound("Client not found");
+            }
+            var responseDto = ClientMappings.ToResponseDto(client);
+            return Ok(responseDto);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
     }
 
     [HttpGet]
@@ -63,5 +75,10 @@ public class ClientsController : ControllerBase
     {
         _clientService.RemoveClient(nif);
         return NoContent();
+    }
+
+    private bool IsValidNif(string nif)
+    {
+        return Regex.IsMatch(nif, @"^\d{8}[A-Z]{1}$");
     }
 }
