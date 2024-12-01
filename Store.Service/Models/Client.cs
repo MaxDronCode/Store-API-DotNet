@@ -1,6 +1,6 @@
-﻿namespace Store.Service;
+﻿namespace Store.Service.Models;
 
-internal class Client
+public class Client
 {
     public string Nif { get; set; }
     public string Name { get; set; }
