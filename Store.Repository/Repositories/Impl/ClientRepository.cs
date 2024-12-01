@@ -1,4 +1,6 @@
-﻿using Store.Repository.DbConfig;
+﻿using Microsoft.EntityFrameworkCore;
+using Store.Repository.DbConfig;
+using Store.Repository.Exceptions;
 using Store.Repository.Models;
 
 namespace Store.Repository.Repositories.Impl;
@@ -19,9 +21,16 @@ public class ClientRepository : IClientRepository
         return client;
     }
 
-    public ClientEntity? GetClientByNif(string nif)
+    public async Task<ClientEntity?> GetClientByNif(string nif)
     {
-        return _context.Clients.FirstOrDefault(c => c.Nif == nif);
+        try
+        {
+            return await _context.Clients.FirstOrDefault(c => c.Nif == nif);
+        }
+        catch (DbUpdateException e)
+        {
+            throw new DataAccessException("Error while trying to get client by NIF", e);
+        }
     }
 
     public IEnumerable<ClientEntity> GetClients()
