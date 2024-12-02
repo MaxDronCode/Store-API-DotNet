@@ -28,7 +28,7 @@ public class ClientRepository : IClientRepository
     {
         try
         {
-            return await _context.Clients.FirstOrDefault(c => c.Nif == nif);
+            return await _context.Clients.FirstOrDefaultAsync(c => c.Nif == nif);
         }
         catch (DbUpdateException e)
         {
