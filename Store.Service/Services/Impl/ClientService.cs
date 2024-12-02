@@ -58,15 +58,15 @@ public class ClientService : IClientService
     {
         _logger.LogInformation("Removing client with NIF {Nif}", nif);
 
-        var client = await _clientRepository.GetClientByNif(nif);
-        if (client == null)
+        var clientEntity = await _clientRepository.GetClientByNif(nif);
+        if (clientEntity == null)
         {
             throw new ClientNotFoundException($"Client not found with NIF {nif}");
         }
 
         try
         {
-            await _clientRepository.RemoveClient(ClientMappings.ToEntity(client);
+            await _clientRepository.RemoveClient(clientEntity);
         }
         catch (DataAccessException e)
         {

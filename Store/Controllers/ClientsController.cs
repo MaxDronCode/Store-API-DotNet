@@ -105,7 +105,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpDelete("{nif}")]
-    public async IActionResult RemoveClient(string nif)
+    public async Task<IActionResult> RemoveClient(string nif)
     {
         _logger.LogInformation("Request for removing client with NIF {Nif}", nif);
 
