@@ -1,5 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Store.Api.Exceptions;
 using Store.Api.Mappings;
 using Store.API.Models;
 using Store.Service.Services;
@@ -65,16 +67,41 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPut("{nif}")]
-    public ActionResult UpdateClient(string nif, ClientRequestDto clientDto)
+    public async Task<ActionResult> UpdateClient(string nif, ClientRequestDto clientDto)
     {
+        _logger.LogInformation("Request for updating client with NIF {Nif}", nif);
+
+        if (!IsValidNif(nif))
+        {
+            ModelState.AddModelError("InvalidNif", "Invalid NIF format.");
+            return BadRequest(ModelState);
+        }
+
         if (nif != clientDto.Nif)
         {
-            return BadRequest("Nif provided and client nif doesn't match.");
+            ModelState.AddModelError("NifMismatch", "Nif provided and client nif doesn't match.");
+            return BadRequest(ModelState);
         }
-        var client = ClientMappings.ToDomainModel(clientDto);
-        var updatedClient = _clientService.UpdateClient(client);
-        var responseDto = ClientMappings.ToResponseDto(updatedClient);
-        return Ok(responseDto);
+        try
+        {
+            var client = ClientMappings.ToDomainModel(clientDto);
+            var updatedClient = await _clientService.UpdateClient(client);
+            var responseDto = ClientMappings.ToResponseDto(updatedClient);
+            return Ok(responseDto);
+        }
+        catch (ClientNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error updating client with NIF {Nif}", nif);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
     }
 
     [HttpDelete("{nif}")]

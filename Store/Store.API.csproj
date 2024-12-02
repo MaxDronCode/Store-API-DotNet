@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Store.Exceptions\Store.Exceptions.csproj" />
     <ProjectReference Include="..\Store.Repository\Store.Repository.csproj" />
     <ProjectReference Include="..\Store.Service\Store.Service.csproj" />
   </ItemGroup>

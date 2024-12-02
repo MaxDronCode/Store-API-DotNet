@@ -12,5 +12,5 @@ public interface IClientRepository
 
     void RemoveClient(string nif);
 
-    ClientEntity UpdateClient(ClientEntity client);
+    Task<ClientEntity> UpdateClient(ClientEntity client);
 }

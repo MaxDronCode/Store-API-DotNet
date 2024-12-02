@@ -12,5 +12,5 @@ public interface IClientService
 
     void RemoveClient(string nif);
 
-    Client UpdateClient(Client client);
+    Task<Client> UpdateClient(Client client);
 }

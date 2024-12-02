@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Store.Api.Exceptions;
+using Store.Repository.Exceptions;
 using Store.Repository.Repositories;
 using Store.Service.Mappings;
 using Store.Service.Models;
@@ -57,8 +59,26 @@ public class ClientService : IClientService
         throw new NotImplementedException();
     }
 
-    public Client UpdateClient(Client client)
+    public async Task<Client> UpdateClient(Client client)
     {
-        throw new NotImplementedException();
+        var existingEntity = await _clientRepository.GetClientByNif(client.Nif);
+        if (existingEntity == null)
+        {
+            throw new ClientNotFoundException("Client not found with NIF {client.Nif}");
+        }
+
+        existingEntity.Name = client.Name;
+        existingEntity.Address = client.Address;
+
+        try
+        {
+            var updatedEntity = await _clientRepository.UpdateClient(existingEntity);
+            return ClientMappings.ToDomainModel(updatedEntity);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to update client with NIF {Nif}", client.Nif);
+            throw;
+        }
     }
 }

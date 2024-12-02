@@ -47,8 +47,24 @@ public class ClientRepository : IClientRepository
         throw new NotImplementedException();
     }
 
-    public ClientEntity UpdateClient(ClientEntity client)
+    public async Task<ClientEntity> UpdateClient(ClientEntity client)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _context.Clients.Update(client);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Client with NIF {Nif} updated.", client.Nif);
+            return client;
+        }
+        catch (DbUpdateConcurrencyException e)
+        {
+            _logger.LogError(e, "Concurreny error while trying to update client with NIF {Nif}", client.Nif);
+            throw new DataAccessException("Error while trying to update client", e);
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.LogError(e, "Error while trying to update client with NIF {Nif}", client.Nif);
+            throw new DataAccessException("Error while trying to update client", e);
+        }
     }
 }
