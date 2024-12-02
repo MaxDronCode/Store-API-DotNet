@@ -105,10 +105,36 @@ public class ClientsController : ControllerBase
     }
 
     [HttpDelete("{nif}")]
-    public IActionResult RemoveClient(string nif)
+    public async IActionResult RemoveClient(string nif)
     {
-        _clientService.RemoveClient(nif);
-        return NoContent();
+        _logger.LogInformation("Request for removing client with NIF {Nif}", nif);
+
+        if (!IsValidNif(nif))
+        {
+            ModelState.AddModelError("InvalidNif", "Invalid NIF format.");
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            await _clientService.RemoveClient(nif);
+            return NoContent();
+        }
+        catch (ClientNotFoundException e)
+        {
+            _logger.LogWarning(e, "Client with NIF {Nif} not found.", nif);
+            return NotFound(e.Message);
+        }
+        catch (ValidationException e)
+        {
+            _logger.LogWarning(e, "Validation error while trying to remove client with NIF {Nif}", nif);
+            return BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error removing client with NIF {Nif}", nif);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
     }
 
     private bool IsValidNif(string nif)

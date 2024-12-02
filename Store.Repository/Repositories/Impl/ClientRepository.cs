@@ -42,9 +42,19 @@ public class ClientRepository : IClientRepository
         return _context.Clients;
     }
 
-    public void RemoveClient(string nif)
+    public async Task RemoveClient(ClientEntity entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _context.Clients.Remove(entity);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Client with NIF {Nif} removed.", entity.Nif);
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.LogError(e, "Error while trying to remove client with NIF {Nif}", entity.Nif);
+            throw new DataAccessException("Error while trying to remove client", e);
+        }
     }
 
     public async Task<ClientEntity> UpdateClient(ClientEntity client)

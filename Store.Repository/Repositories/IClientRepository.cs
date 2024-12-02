@@ -10,7 +10,7 @@ public interface IClientRepository
 
     IEnumerable<ClientEntity> GetClients();
 
-    void RemoveClient(string nif);
+    Task RemoveClient(ClientEntity entity);
 
     Task<ClientEntity> UpdateClient(ClientEntity client);
 }

@@ -10,7 +10,7 @@ public interface IClientService
 
     IEnumerable<Client> GetClients();
 
-    void RemoveClient(string nif);
+    Task RemoveClient(string nif);
 
     Task<Client> UpdateClient(Client client);
 }

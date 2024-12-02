@@ -54,9 +54,25 @@ public class ClientService : IClientService
         return _clientRepository.GetClients().Select(ClientMappings.ToDomainModel);
     }
 
-    public void RemoveClient(string nif)
+    public async Task RemoveClient(string nif)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Removing client with NIF {Nif}", nif);
+
+        var client = await _clientRepository.GetClientByNif(nif);
+        if (client == null)
+        {
+            throw new ClientNotFoundException($"Client not found with NIF {nif}");
+        }
+
+        try
+        {
+            await _clientRepository.RemoveClient(ClientMappings.ToEntity(client);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to remove client with NIF {Nif}", nif);
+            throw;
+        }
     }
 
     public async Task<Client> UpdateClient(Client client)
