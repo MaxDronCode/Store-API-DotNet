@@ -4,7 +4,7 @@ namespace Store.Repository.Repositories;
 
 public interface IClientRepository
 {
-    ClientEntity AddClient(ClientEntity client);
+    Task<ClientEntity> AddClient(ClientEntity client);
 
     Task<ClientEntity?> GetClientByNif(string nif);
 

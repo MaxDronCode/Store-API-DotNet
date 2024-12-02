@@ -4,7 +4,7 @@ namespace Store.Service.Services;
 
 public interface IClientService
 {
-    Client AddClient(Client client);
+    Task<Client> AddClient(Client client);
 
     Task<Client?> GetClientByNif(string nif);
 

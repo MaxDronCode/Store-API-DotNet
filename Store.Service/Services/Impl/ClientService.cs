@@ -13,19 +13,30 @@ public class ClientService : IClientService
     private readonly IClientRepository _clientRepository;
     private readonly ILogger<ClientService> _logger;
     private readonly IMemoryCache _cache;
+    private readonly IMongoClientRepository _mongoClientRepository;
 
-    public ClientService(IClientRepository clientRepository, ILogger<ClientService> logger, IMemoryCache cache)
+    public ClientService(IClientRepository clientRepository, IMongoClientRepository mongoClientRepository, ILogger<ClientService> logger, IMemoryCache cache)
     {
         _clientRepository = clientRepository;
         _logger = logger;
         _cache = cache;
+        _mongoClientRepository = mongoClientRepository;
     }
 
-    public Client AddClient(Client client)
+    public async Task<Client> AddClient(Client client)
     {
-        var entity = ClientMappings.ToEntity(client);
-        var addedEntity = _clientRepository.AddClient(entity);
-        return ClientMappings.ToDomainModel(addedEntity);
+        try
+        {
+            var entity = ClientMappings.ToEntity(client);
+            var addedEntity = await _clientRepository.AddClient(entity);
+            await _mongoClientRepository.AddClient(entity);
+            return ClientMappings.ToDomainModel(addedEntity);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while trying to add client with NIF {Nif}", client.Nif);
+            throw;
+        }
     }
 
     public async Task<Client?> GetClientByNif(string nif)

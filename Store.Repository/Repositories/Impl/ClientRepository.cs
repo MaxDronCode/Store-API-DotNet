@@ -17,10 +17,10 @@ public class ClientRepository : IClientRepository
         _logger = logger;
     }
 
-    public ClientEntity AddClient(ClientEntity client)
+    public async Task<ClientEntity> AddClient(ClientEntity client)
     {
         _context.Clients.Add(client);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return client;
     }
 

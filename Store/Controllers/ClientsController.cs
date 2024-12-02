@@ -22,10 +22,10 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateClient(ClientRequestDto clientDto)
+    public async Task<IActionResult> CreateClient(ClientRequestDto clientDto)
     {
         var client = ClientMappings.ToDomainModel(clientDto);
-        var createdClient = _clientService.AddClient(client);
+        var createdClient = await _clientService.AddClient(client);
         var responseDto = ClientMappings.ToResponseDto(createdClient);
         return CreatedAtAction(nameof(GetClient), new { nif = responseDto.Nif }, responseDto);
     }
