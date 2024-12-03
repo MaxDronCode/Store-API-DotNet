@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Store.Repository.DbConfig;
+using Store.Repository.Exceptions;
 using Store.Repository.Models;
 
 namespace Store.Repository.Repositories.Impl;
@@ -21,6 +22,19 @@ public class ProductRepository : IProductRepository
         _context.Products.Add(entity);
         await _context.SaveChangesAsync();
         return entity;
+    }
+
+    public async Task<ProductEntity?> GetProductByCode(string code)
+    {
+        try
+        {
+            return await _context.Products.FirstOrDefaultAsync(p => p.Code == code);
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.LogError(e, "Error while trying to get product by code {Code}", code);
+            throw new DataAccessException("Error while trying to get product by code", e);
+        }
     }
 
     public async Task<ProductEntity?> GetProductByName(string name)
