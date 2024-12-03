@@ -3,6 +3,8 @@ using NanoidDotNet;
 using Store.Api.Models;
 using Store.Exceptions;
 using Store.Repository;
+using Store.Repository.Exceptions;
+using Store.Repository.Models;
 using Store.Repository.Repositories.Impl;
 using Store.Service.Mappings;
 using Store.Service.Models;
@@ -50,7 +52,16 @@ public class ProductService : IProductService
     public async Task<Product?> GetProductByCode(string code)
     {
         _logger.LogInformation("Getting product by code {Code}", code);
-        var entityOrNull = await _productRepository.GetProductByCode(code);
+        ProductEntity? entityOrNull;
+        try
+        {
+            entityOrNull = await _productRepository.GetProductByCode(code);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to get product by code {Code}", code);
+            throw;
+        }
 
         if (entityOrNull != null)
         {
