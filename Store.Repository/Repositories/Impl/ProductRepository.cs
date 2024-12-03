@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Store.Repository.DbConfig;
 using Store.Repository.Models;
 
@@ -20,5 +21,11 @@ public class ProductRepository : IProductRepository
         _context.Products.Add(entity);
         await _context.SaveChangesAsync();
         return entity;
+    }
+
+    public async Task<ProductEntity?> GetProductByName(string name)
+    {
+        var entityOrNull = await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
+        return entityOrNull;
     }
 }
