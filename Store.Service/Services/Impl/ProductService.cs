@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NanoidDotNet;
 using Store.Api.Models;
+using Store.Exceptions;
 using Store.Repository;
 using Store.Repository.Repositories.Impl;
 using Store.Service.Mappings;
@@ -22,6 +23,12 @@ public class ProductService : IProductService
 
     public async Task<Product> AddProduct(ProductRequestDto productDto)
     {
+        var entityOrNull = await _productRepository.GetProductByName(productDto.Name);
+        if (entityOrNull != null)
+        {
+            throw new ProductAlreadyExistsException($"A product with the name '{productDto.Name}' already exists.");
+        }
+
         var generatedCode = Nanoid.Generate(size: CodeSize);
         var newProduct = new Product
         {
