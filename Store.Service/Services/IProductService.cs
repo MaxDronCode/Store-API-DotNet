@@ -6,4 +6,6 @@ namespace Store.Service.Services;
 public interface IProductService
 {
     Task<Product> AddProduct(ProductRequestDto product);
+
+    Task<Product?> GetProductByCode(string code);
 }

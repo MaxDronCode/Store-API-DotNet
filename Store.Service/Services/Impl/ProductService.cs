@@ -46,4 +46,19 @@ public class ProductService : IProductService
             throw;
         }
     }
+
+    public async Task<Product?> GetProductByCode(string code)
+    {
+        _logger.LogInformation("Getting product by code {Code}", code);
+        var entityOrNull = await _productRepository.GetProductByCode(code);
+
+        if (entityOrNull != null)
+        {
+            return ProductMappings.ToModel(entityOrNull);
+        }
+        else
+        {
+            throw new ProductNotFoundException($"Product with code '{code}' not found.");
+        }
+    }
 }
