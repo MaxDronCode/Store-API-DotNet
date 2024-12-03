@@ -39,6 +39,7 @@ public class Program
         builder.Services.AddScoped<IClientRepository, ClientRepository>();
         builder.Services.AddScoped<IClientService, ClientService>();
         builder.Services.AddScoped<IMongoClientRepository, MongoClientRepository>();
+        builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddMemoryCache();
 
         var app = builder.Build();
