@@ -55,6 +55,7 @@ public class ProductsController : ControllerBase
         }
         catch (ProductNotFoundException e)
         {
+            _logger.LogWarning("Product with code {Code} not found.", code);
             return NotFound(e.Message);
         }
         var responseDto = ProductMappings.ToResponseDto(product!);
