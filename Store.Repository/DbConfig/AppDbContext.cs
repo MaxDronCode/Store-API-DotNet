@@ -10,4 +10,6 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<ClientEntity> Clients { get; set; }
+
+    public DbSet<ProductEntity> Products { get; set; }
 }
