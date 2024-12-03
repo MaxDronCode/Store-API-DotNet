@@ -34,11 +34,11 @@ public class ProductsController : ControllerBase
             return Conflict(e.Message);
         }
         var responseDto = ProductMappings.ToResponseDto(createdProduct);
-        return CreatedAtAction(nameof(GetProduct), new { code = responseDto.Code }, responseDto);
+        return CreatedAtAction(nameof(GetProductByCode), new { code = responseDto.Code }, responseDto);
     }
 
     [HttpGet("{code}")]
-    public async Task<IActionResult> GetProduct(string code)
+    public async Task<IActionResult> GetProductByCode(string code)
     {
         _logger.LogInformation("Request for obtaining product with code {Code}", code);
 
@@ -48,7 +48,7 @@ public class ProductsController : ControllerBase
             return BadRequest("Invalid code format.");
         }
 
-        Product product;
+        Product? product;
         try
         {
             product = await _productService.GetProductByCode(code);
@@ -57,7 +57,7 @@ public class ProductsController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        var responseDto = ProductMappings.ToResponseDto(product);
+        var responseDto = ProductMappings.ToResponseDto(product!);
         return Ok(responseDto);
     }
 
