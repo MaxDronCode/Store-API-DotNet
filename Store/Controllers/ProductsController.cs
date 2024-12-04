@@ -1,8 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Store.Api.Mappings;
 using Store.Api.Models;
 using Store.Exceptions;
+using Store.Helpers;
 using Store.Repository.Exceptions;
 using Store.Service.Models;
 using Store.Service.Services;
@@ -43,7 +43,7 @@ public class ProductsController : ControllerBase
     {
         _logger.LogInformation("Request for obtaining product with code {Code}", code);
 
-        if (!isValidCode(code))
+        if (!Validator.isValidCode(code))
         {
             _logger.LogWarning("Invalid code recieved: {Code}.", code);
             return BadRequest("Invalid code format.");
@@ -75,7 +75,7 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> UpdateProduct(string code, ProductRequestDto productDto)
     {
         _logger.LogInformation("Request for updating product with code {Code}", code);
-        if (!isValidCode(code))
+        if (!Validator.isValidCode(code))
         {
             ModelState.AddModelError("InvalidCode", "Invalid code format.");
             return BadRequest(ModelState);
@@ -102,10 +102,5 @@ public class ProductsController : ControllerBase
             _logger.LogError(e, "Error while trying to update product with code {Code}", code);
             return StatusCode(500, new { message = "An error occured during the request." });
         }
-    }
-
-    private bool isValidCode(string code)
-    {
-        return Regex.IsMatch(code, @"^.{10}$");
     }
 }
