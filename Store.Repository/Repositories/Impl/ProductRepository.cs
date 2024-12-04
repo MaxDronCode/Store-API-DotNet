@@ -42,4 +42,10 @@ public class ProductRepository : IProductRepository
         var entityOrNull = await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
         return entityOrNull;
     }
+
+    public Task<IEnumerable<ProductEntity>> GetProducts()
+    {
+        var products = _context.Products;
+        return Task.FromResult(products.AsEnumerable());
+    }
 }

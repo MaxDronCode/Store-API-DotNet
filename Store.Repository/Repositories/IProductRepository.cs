@@ -9,4 +9,6 @@ public interface IProductRepository
     Task<ProductEntity?> GetProductByName(string name);
 
     Task<ProductEntity?> GetProductByCode(string code);
+
+    Task<IEnumerable<ProductEntity>> GetProducts();
 }

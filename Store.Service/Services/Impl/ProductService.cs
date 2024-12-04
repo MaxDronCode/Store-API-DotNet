@@ -71,4 +71,10 @@ public class ProductService : IProductService
             throw new ProductNotFoundException($"Product with code '{code}' not found.");
         }
     }
+
+    public async Task<IEnumerable<Product>> GetProducts()
+    {
+        var products = await _productRepository.GetProducts();
+        return products.Select(ProductMappings.ToModel);
+    }
 }
