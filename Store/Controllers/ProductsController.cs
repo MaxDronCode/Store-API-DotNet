@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Store.Api.Mappings;
 using Store.Api.Models;
 using Store.Exceptions;
+using Store.Repository.Exceptions;
 using Store.Service.Models;
 using Store.Service.Services;
 
@@ -68,6 +69,39 @@ public class ProductsController : ControllerBase
         var products = await _productService.GetProducts();
         var responseDtos = products.Select(ProductMappings.ToResponseDto);
         return Ok(responseDtos);
+    }
+
+    [HttpPut("{code}")]
+    public async Task<IActionResult> UpdateProduct(string code, ProductRequestDto productDto)
+    {
+        _logger.LogInformation("Request for updating product with code {Code}", code);
+        if (!isValidCode(code))
+        {
+            ModelState.AddModelError("InvalidCode", "Invalid code format.");
+            return BadRequest(ModelState);
+        }
+
+        var product = ProductMappings.ToDomainModel(code, productDto);
+        try
+        {
+            var updattedProduct = await _productService.UpdateProduct(product);
+            return Ok(ProductMappings.ToResponseDto(updattedProduct));
+        }
+        catch (ProductNotFoundException e)
+        {
+            _logger.LogWarning("Product with code {Code} not found.", code);
+            return NotFound(e.Message);
+        }
+        catch (ProductAlreadyExistsException e)
+        {
+            _logger.LogWarning("Product with name {Name} already exists.", product.Name);
+            return Conflict(e.Message);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to update product with code {Code}", code);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
     }
 
     private bool isValidCode(string code)
