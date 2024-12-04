@@ -62,6 +62,14 @@ public class ProductsController : ControllerBase
         return Ok(responseDto);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetProducts()
+    {
+        var products = await _productService.GetProducts();
+        var responseDtos = products.Select(ProductMappings.ToResponseDto);
+        return Ok(responseDtos);
+    }
+
     private bool isValidCode(string code)
     {
         return Regex.IsMatch(code, @"^.{10}$");
