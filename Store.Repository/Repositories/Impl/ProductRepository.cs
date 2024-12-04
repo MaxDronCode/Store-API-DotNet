@@ -48,4 +48,25 @@ public class ProductRepository : IProductRepository
         var products = _context.Products;
         return Task.FromResult(products.AsEnumerable());
     }
+
+    public async Task<ProductEntity> UpdateProduct(ProductEntity entity)
+    {
+        try
+        {
+            _context.Products.Update(entity);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Product with code {Code} updated.", entity.Code);
+            return entity;
+        }
+        catch (DbUpdateConcurrencyException e)
+        {
+            _logger.LogError(e, "Error while trying to update product with code {Code}", entity.Code);
+            throw new DataAccessException("Error while trying to update product", e);
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.LogError(e, "Error while trying to update product with code {Code}", entity.Code);
+            throw new DataAccessException("Error while trying to update product", e);
+        }
+    }
 }

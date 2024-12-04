@@ -11,4 +11,6 @@ public interface IProductRepository
     Task<ProductEntity?> GetProductByCode(string code);
 
     Task<IEnumerable<ProductEntity>> GetProducts();
+
+    Task<ProductEntity> UpdateProduct(ProductEntity entity);
 }
