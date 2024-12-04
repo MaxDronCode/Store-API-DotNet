@@ -12,4 +12,6 @@ public interface IProductService
     Task<IEnumerable<Product>> GetProducts();
 
     Task<Product> UpdateProduct(Product product);
+
+    Task DeleteProduct(string code);
 }

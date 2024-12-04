@@ -73,7 +73,7 @@ public class ClientRepository : IClientRepository
         }
         catch (DbUpdateException e)
         {
-            _logger.LogError(e, "Error while trying to update client with NIF {Nif}", entityv.Nif);
+            _logger.LogError(e, "Error while trying to update client with NIF {Nif}", entity.Nif);
             throw new DataAccessException("Error while trying to update client", e);
         }
     }

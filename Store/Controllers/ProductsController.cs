@@ -114,4 +114,30 @@ public class ProductsController : ControllerBase
             return StatusCode(500, new { message = "An error occured during the request." });
         }
     }
+
+    [HttpDelete("{code}")]
+    public async Task<IActionResult> DeleteProduct(string code)
+    {
+        _logger.LogInformation("Request for deleting product with code {Code}", code);
+        if (!Validator.isValidCode(code))
+        {
+            _logger.LogWarning("Invalid code recieved: {Code}.", code);
+            return BadRequest("Invalid code format.");
+        }
+        try
+        {
+            await _productService.DeleteProduct(code);
+            return NoContent();
+        }
+        catch (ProductNotFoundException e)
+        {
+            _logger.LogWarning("Product with code {Code} not found.", code);
+            return NotFound(e.Message);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to delete product with code {Code}", code);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
+    }
 }

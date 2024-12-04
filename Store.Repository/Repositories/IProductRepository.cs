@@ -13,4 +13,6 @@ public interface IProductRepository
     Task<IEnumerable<ProductEntity>> GetProducts();
 
     Task<ProductEntity> UpdateProduct(ProductEntity entity);
+
+    Task DeleteProduct(ProductEntity entity);
 }

@@ -82,4 +82,18 @@ public class ProductRepository : IProductRepository
             throw new DataAccessException("Error while trying to update product", e);
         }
     }
+
+    public Task DeleteProduct(ProductEntity entity)
+    {
+        try
+        {
+            _context.Products.Remove(entity);
+            return _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.LogError(e, "Error while trying to remove product with code {Code}", entity.Code);
+            throw new DataAccessException("Error while trying to remove product", e);
+        }
+    }
 }

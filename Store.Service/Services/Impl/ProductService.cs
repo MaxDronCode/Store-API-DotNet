@@ -110,4 +110,25 @@ public class ProductService : IProductService
 
         return ProductMappings.ToModel(entity);
     }
+
+    public async Task DeleteProduct(string code)
+    {
+        var existingProduct = await _productRepository.GetProductByCode(code);
+
+        if (existingProduct == null)
+        {
+            _logger.LogWarning("Product with code {Code} not found.", code);
+            throw new ProductNotFoundException($"Product with code '{code}' not found.");
+        }
+
+        try
+        {
+            await _productRepository.DeleteProduct(existingProduct);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to delete product with code {Code}", code);
+            throw;
+        }
+    }
 }
