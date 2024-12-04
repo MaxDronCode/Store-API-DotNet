@@ -37,6 +37,11 @@ public class ClientsController : ControllerBase
             _logger.LogWarning(e, "Client with NIF {Nif} already exists.", client.Nif);
             return Conflict(e.Message);
         }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error creating client with NIF {Nif}", client.Nif);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
         var responseDto = ClientMappings.ToResponseDto(createdClient);
         return CreatedAtAction(nameof(GetClient), new { nif = responseDto.Nif }, responseDto);
     }
