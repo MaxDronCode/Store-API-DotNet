@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Store.Api.Exceptions;
 using Store.Api.Mappings;
@@ -51,7 +50,7 @@ public class ClientsController : ControllerBase
     {
         _logger.LogInformation("Request for obtaining client with NIF {Nif}", nif);
 
-        if (!IsValidNif(nif))
+        if (!Helpers.Validator.IsValidNif(nif))
         {
             _logger.LogWarning("Invalid NIF recieved: {Nif}.", nif);
             return BadRequest("Invalid NIF format.");
@@ -87,7 +86,7 @@ public class ClientsController : ControllerBase
     {
         _logger.LogInformation("Request for updating client with NIF {Nif}", nif);
 
-        if (!IsValidNif(nif))
+        if (!Helpers.Validator.IsValidNif(nif))
         {
             ModelState.AddModelError("InvalidNif", "Invalid NIF format.");
             return BadRequest(ModelState);
@@ -127,7 +126,7 @@ public class ClientsController : ControllerBase
     {
         _logger.LogInformation("Request for removing client with NIF {Nif}", nif);
 
-        if (!IsValidNif(nif))
+        if (!Helpers.Validator.IsValidNif(nif))
         {
             ModelState.AddModelError("InvalidNif", "Invalid NIF format.");
             return BadRequest(ModelState);
@@ -153,10 +152,5 @@ public class ClientsController : ControllerBase
             _logger.LogError(e, "Error removing client with NIF {Nif}", nif);
             return StatusCode(500, new { message = "An error occured during the request." });
         }
-    }
-
-    private bool IsValidNif(string nif)
-    {
-        return Regex.IsMatch(nif, @"^\d{8}[A-Z]{1}$");
     }
 }
