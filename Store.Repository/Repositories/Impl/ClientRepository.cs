@@ -68,12 +68,12 @@ public class ClientRepository : IClientRepository
         }
         catch (DbUpdateConcurrencyException e)
         {
-            _logger.LogError(e, "Concurreny error while trying to update client with NIF {Nif}", client.Nif);
+            _logger.LogError(e, "Concurreny error while trying to update client with NIF {Nif}", entity.Nif);
             throw new DataAccessException("Error while trying to update client", e);
         }
         catch (DbUpdateException e)
         {
-            _logger.LogError(e, "Error while trying to update client with NIF {Nif}", client.Nif);
+            _logger.LogError(e, "Error while trying to update client with NIF {Nif}", entityv.Nif);
             throw new DataAccessException("Error while trying to update client", e);
         }
     }

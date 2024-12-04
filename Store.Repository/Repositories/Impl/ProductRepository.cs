@@ -60,7 +60,13 @@ public class ProductRepository : IProductRepository
     {
         try
         {
-            _context.Products.Update(entity);
+            var existingEntity = await _context.Products.FindAsync(entity.Code);
+            if (existingEntity == null)
+            {
+                throw new DataAccessException("Product not found");
+            }
+
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Product with code {Code} updated.", entity.Code);
             return entity;
