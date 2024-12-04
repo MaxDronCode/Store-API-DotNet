@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Store.Exceptions;
 using Store.Repository.DbConfig;
 using Store.Repository.Exceptions;
 using Store.Repository.Models;
@@ -37,10 +38,14 @@ public class ProductRepository : IProductRepository
         }
     }
 
-    public async Task<ProductEntity?> GetProductByName(string name)
+    public async Task<ProductEntity> GetProductByName(string name)
     {
-        var entityOrNull = await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
-        return entityOrNull;
+        var entity = await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
+        if (entity == null)
+        {
+            throw new ProductNotFoundException($"Product with name '{name}' not found.");
+        }
+        return entity;
     }
 
     public Task<IEnumerable<ProductEntity>> GetProducts()
