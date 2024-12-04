@@ -5,10 +5,11 @@ namespace Store.Api.Mappings;
 
 public static class ProductMappings
 {
-    public static Product ToDomainModel(ProductRequestDto dto)
+    public static Product ToDomainModel(string code, ProductRequestDto dto)
     {
         return new Product
         {
+            Code = code,
             Name = dto.Name
         };
     }
