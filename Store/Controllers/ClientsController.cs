@@ -98,9 +98,11 @@ public class ClientsController : ControllerBase
             ModelState.AddModelError("NifMismatch", "Nif provided and client nif doesn't match.");
             return BadRequest(ModelState);
         }
+
+        var client = ClientMappings.ToDomainModel(clientDto);
+
         try
         {
-            var client = ClientMappings.ToDomainModel(clientDto);
             var updatedClient = await _clientService.UpdateClient(client);
             var responseDto = ClientMappings.ToResponseDto(updatedClient);
             return Ok(responseDto);
