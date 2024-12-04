@@ -5,7 +5,6 @@ using Store.Exceptions;
 using Store.Repository;
 using Store.Repository.Exceptions;
 using Store.Repository.Models;
-using Store.Repository.Repositories.Impl;
 using Store.Service.Mappings;
 using Store.Service.Models;
 
@@ -17,7 +16,7 @@ public class ProductService : IProductService
     private readonly ILogger<ProductService> _logger;
     private const int CodeSize = 10;
 
-    public ProductService(ProductRepository productRepository, ILogger<ProductService> logger)
+    public ProductService(IProductRepository productRepository, ILogger<ProductService> logger)
     {
         _productRepository = productRepository;
         _logger = logger;

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Store.Repository;
 using Store.Repository.DbConfig;
 using Store.Repository.Repositories;
 using Store.Repository.Repositories.Impl;
@@ -40,6 +41,7 @@ public class Program
         builder.Services.AddScoped<IClientService, ClientService>();
         builder.Services.AddScoped<IMongoClientRepository, MongoClientRepository>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddMemoryCache();
 
         var app = builder.Build();

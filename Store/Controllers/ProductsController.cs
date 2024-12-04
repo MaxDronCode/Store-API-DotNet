@@ -64,6 +64,6 @@ public class ProductsController : ControllerBase
 
     private bool isValidCode(string code)
     {
-        return Regex.IsMatch(code, @"^[a-zA-Z0-9]{10}$");
+        return Regex.IsMatch(code, @"^.{10}$");
     }
 }

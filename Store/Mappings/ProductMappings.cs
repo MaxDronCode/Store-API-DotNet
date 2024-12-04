@@ -9,7 +9,6 @@ public static class ProductMappings
     {
         return new Product
         {
-            Code = dto.Code,
             Name = dto.Name
         };
     }
