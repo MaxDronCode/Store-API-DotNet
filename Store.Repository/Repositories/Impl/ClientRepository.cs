@@ -57,14 +57,14 @@ public class ClientRepository : IClientRepository
         }
     }
 
-    public async Task<ClientEntity> UpdateClient(ClientEntity client)
+    public async Task<ClientEntity> UpdateClient(ClientEntity entity)
     {
         try
         {
-            _context.Clients.Update(client);
+            _context.Clients.Update(entity);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Client with NIF {Nif} updated.", client.Nif);
-            return client;
+            _logger.LogInformation("Client with NIF {Nif} updated.", entity.Nif);
+            return entity;
         }
         catch (DbUpdateConcurrencyException e)
         {
