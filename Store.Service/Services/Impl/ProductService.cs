@@ -27,6 +27,7 @@ public class ProductService : IProductService
         var entityOrNull = await _productRepository.GetProductByName(productDto.Name);
         if (entityOrNull != null)
         {
+            _logger.LogWarning("Product with name {Name} already exists.", productDto.Name);
             throw new ProductAlreadyExistsException($"A product with the name '{productDto.Name}' already exists.");
         }
 
@@ -76,5 +77,37 @@ public class ProductService : IProductService
     {
         var products = await _productRepository.GetProducts();
         return products.Select(ProductMappings.ToModel);
+    }
+
+    public async Task<Product> UpdateProduct(Product product)
+    {
+        var existingProductWithCode = await _productRepository.GetProductByCode(product.Code);
+
+        if (existingProductWithCode == null)
+        {
+            _logger.LogWarning("Product with code {Code} not found.", product.Code);
+            throw new ProductNotFoundException($"Product with code '{product.Code}' not found.");
+        }
+
+        var existingProductWithName = await _productRepository.GetProductByName(product.Name);
+
+        if (existingProductWithName != null)
+        {
+            _logger.LogWarning("Product with name {Name} already exists.", product.Name);
+            throw new ProductAlreadyExistsException($"A product with the name '{product.Name}' already exists.");
+        }
+
+        ProductEntity entity;
+        try
+        {
+            entity = await _productRepository.UpdateProduct(ProductMappings.ToEntity(product));
+        }
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to update product with code {Code}", product.Code);
+            throw;
+        }
+
+        return ProductMappings.ToModel(entity);
     }
 }

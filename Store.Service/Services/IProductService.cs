@@ -10,4 +10,6 @@ public interface IProductService
     Task<Product?> GetProductByCode(string code);
 
     Task<IEnumerable<Product>> GetProducts();
+
+    Task<Product> UpdateProduct(Product product);
 }
