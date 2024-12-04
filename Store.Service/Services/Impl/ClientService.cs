@@ -25,6 +25,12 @@ public class ClientService : IClientService
 
     public async Task<Client> AddClient(Client client)
     {
+        var existingClient = await GetClientByNif(client.Nif);
+        if (existingClient != null)
+        {
+            throw new ClientAlreadyExistsException($"Client already exists with NIF {client.Nif}");
+        }
+
         try
         {
             var entity = ClientMappings.ToEntity(client);
