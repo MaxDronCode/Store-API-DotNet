@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Store.Exceptions;
 using Store.Repository.DbConfig;
 using Store.Repository.Exceptions;
 using Store.Repository.Models;
@@ -38,14 +37,17 @@ public class ProductRepository : IProductRepository
         }
     }
 
-    public async Task<ProductEntity> GetProductByName(string name)
+    public async Task<ProductEntity?> GetProductByName(string name)
     {
-        var entity = await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
-        if (entity == null)
+        try
         {
-            throw new ProductNotFoundException($"Product with name '{name}' not found.");
+            return await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
         }
-        return entity;
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to get product by name {Name}", name);
+            throw new DataAccessException("Error while trying to get product by name", e);
+        }
     }
 
     public Task<IEnumerable<ProductEntity>> GetProducts()

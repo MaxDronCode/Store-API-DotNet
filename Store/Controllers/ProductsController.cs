@@ -49,7 +49,7 @@ public class ProductsController : ControllerBase
             return BadRequest("Invalid code format.");
         }
 
-        Product? product;
+        Product product;
         try
         {
             product = await _productService.GetProductByCode(code);
@@ -59,7 +59,18 @@ public class ProductsController : ControllerBase
             _logger.LogWarning("Product with code {Code} not found.", code);
             return NotFound(e.Message);
         }
-        var responseDto = ProductMappings.ToResponseDto(product!);
+        catch (DataAccessException e)
+        {
+            _logger.LogError(e, "Error while trying to get product with code {Code}", code);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occured while trying to get product with code {Code}", code);
+            return StatusCode(500, new { message = "An error occured during the request." });
+        }
+
+        var responseDto = ProductMappings.ToResponseDto(product);
         return Ok(responseDto);
     }
 

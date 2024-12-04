@@ -49,7 +49,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<Product?> GetProductByCode(string code)
+    public async Task<Product> GetProductByCode(string code)
     {
         _logger.LogInformation("Getting product by code {Code}", code);
         ProductEntity? entityOrNull;

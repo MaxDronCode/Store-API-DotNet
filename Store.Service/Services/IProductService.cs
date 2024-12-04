@@ -7,7 +7,7 @@ public interface IProductService
 {
     Task<Product> AddProduct(ProductRequestDto product);
 
-    Task<Product?> GetProductByCode(string code);
+    Task<Product> GetProductByCode(string code);
 
     Task<IEnumerable<Product>> GetProducts();
 
