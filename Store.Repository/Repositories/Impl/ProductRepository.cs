@@ -30,7 +30,7 @@ public class ProductRepository : IProductRepository
         {
             return await _context.Products.FirstOrDefaultAsync(p => p.Code == code);
         }
-        catch (DbUpdateException e)
+        catch (DataAccessException e)
         {
             _logger.LogError(e, "Error while trying to get product by code {Code}", code);
             throw new DataAccessException("Error while trying to get product by code", e);
