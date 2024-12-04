@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Store.Api.Exceptions;
+using Store.Exceptions;
 using Store.Repository.Exceptions;
 using Store.Repository.Repositories;
 using Store.Service.Mappings;

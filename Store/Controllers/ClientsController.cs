@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Store.Api.Exceptions;
 using Store.Api.Mappings;
 using Store.API.Models;
+using Store.Exceptions;
+using Store.Service.Models;
 using Store.Service.Services;
 
 namespace Store.Api.Controllers;
@@ -25,7 +27,16 @@ public class ClientsController : ControllerBase
     public async Task<IActionResult> CreateClient(ClientRequestDto clientDto)
     {
         var client = ClientMappings.ToDomainModel(clientDto);
-        var createdClient = await _clientService.AddClient(client);
+        Client createdClient;
+        try
+        {
+            createdClient = await _clientService.AddClient(client);
+        }
+        catch (ClientAlreadyExistsException e)
+        {
+            _logger.LogWarning(e, "Client with NIF {Nif} already exists.", client.Nif);
+            return Conflict(e.Message);
+        }
         var responseDto = ClientMappings.ToResponseDto(createdClient);
         return CreatedAtAction(nameof(GetClient), new { nif = responseDto.Nif }, responseDto);
     }
