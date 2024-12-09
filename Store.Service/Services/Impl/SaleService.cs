@@ -52,6 +52,13 @@ public class SaleService : ISaleService
 
         var createdSale = SaleMappings.ToModel(createdSaleEntity);
 
+        foreach (var item in createdSale.Items)
+        {
+            var originalItem = sale.Items.FirstOrDefault(i => i.ProductCode == item.ProductCode);
+            if (originalItem != null)
+                item.ProductName = originalItem.ProductName;
+        }
+
         return createdSale;
     }
 }
