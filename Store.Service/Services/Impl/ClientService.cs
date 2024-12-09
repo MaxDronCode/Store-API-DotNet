@@ -14,14 +14,12 @@ public class ClientService : IClientService
     private readonly IClientRepository _clientRepository;
     private readonly ILogger<ClientService> _logger;
     private readonly IMemoryCache _cache;
-    private readonly IMongoClientRepository _mongoClientRepository;
 
-    public ClientService(IClientRepository clientRepository, IMongoClientRepository mongoClientRepository, ILogger<ClientService> logger, IMemoryCache cache)
+    public ClientService(IClientRepository clientRepository, ILogger<ClientService> logger, IMemoryCache cache)
     {
         _clientRepository = clientRepository;
         _logger = logger;
         _cache = cache;
-        _mongoClientRepository = mongoClientRepository;
     }
 
     public async Task<Client> AddClient(Client client)
@@ -36,7 +34,6 @@ public class ClientService : IClientService
         {
             var entity = ClientMappings.ToEntity(client);
             var addedEntity = await _clientRepository.AddClient(entity);
-            await _mongoClientRepository.AddClient(entity);
             return ClientMappings.ToDomainModel(addedEntity);
         }
         catch (Exception e)
