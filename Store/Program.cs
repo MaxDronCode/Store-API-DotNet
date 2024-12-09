@@ -44,6 +44,7 @@ public class Program
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<ISaleService, SaleService>();
         builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+        builder.Services.AddScoped<IMongoSaleLogRepository, MongoSaleLogRepository>();
         builder.Services.AddMemoryCache();
 
         var app = builder.Build();
