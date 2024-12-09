@@ -2,7 +2,7 @@
 
 namespace Store.Api.Models;
 
-public class SaleItemDto
+public class SaleItemRequestDto
 {
     [Required]
     public string ProductName { get; set; }

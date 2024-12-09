@@ -9,5 +9,5 @@ public class SaleRequestDto
 
     [Required]
     [MinLength(1, ErrorMessage = "At least one sale item is required.")]
-    public IEnumerable<SaleItemDto> Items { get; set; }
+    public IEnumerable<SaleItemRequestDto> Items { get; set; }
 }
