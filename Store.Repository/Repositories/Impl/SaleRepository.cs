@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Store.Repository.DbConfig;
 using Store.Repository.Models;
 
@@ -27,6 +28,23 @@ public class SaleRepository : ISaleRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while trying to create sale");
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<SaleEntity>> GetSalesByClientNif(string nif)
+    {
+        try
+        {
+            return await _context.Sales
+                .Include(s => s.SaleDetails)
+                .ThenInclude(sd => sd.Product)
+                .Where(s => s.ClientNif == nif)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while trying to get sales by client NIF {Nif}", nif);
             throw;
         }
     }
