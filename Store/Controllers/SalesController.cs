@@ -48,4 +48,45 @@ public class SalesController : ControllerBase
 
         return CreatedAtAction(nameof(CreateSale), responseDto);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSalesByClientNif(string nif)
+    {
+        _logger.LogInformation("Request for obtaining sales for client with NIF {Nif}", nif);
+        if (!Helpers.Validator.IsValidNif(nif))
+        {
+            _logger.LogWarning("Invalid NIF recieved: {Nif}.", nif);
+            return BadRequest("Invalid NIF format.");
+        }
+        try
+        {
+            var sales = await _saleService.GetSalesByClientNif(nif);
+            if (sales == null)
+            {
+                return NotFound();
+            }
+            var response = sales.Select(s => new SaleResponseDto
+            {
+                Id = s.Id,
+                ClientNif = s.ClientNif,
+                Items = s.Items.Select(i => new SaleItemResponseDto
+                {
+                    ProductName = i.ProductName,
+                    Quantity = i.Quantity
+                }).ToList()
+            });
+
+            return Ok(response);
+        }
+        catch (ClientNotFoundException e)
+        {
+            _logger.LogError(e, "Client with NIF {Nif} not found", nif);
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error obtaining sales for client with NIF {Nif}", nif);
+            return StatusCode(500, e.Message);
+        }
+    }
 }
