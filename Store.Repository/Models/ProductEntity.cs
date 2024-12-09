@@ -14,4 +14,11 @@ public class ProductEntity
     [Column("name")]
     [MaxLength(20)]
     public string Name { get; set; }
+
+    public virtual ICollection<SaleDetailEntity> SaleDetails { get; set; }
+
+    public ProductEntity()
+    {
+        SaleDetails = new List<SaleDetailEntity>();
+    }
 }

@@ -11,10 +11,22 @@ public class SaleEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
+    [Required]
     [Column("client_nif")]
-    [ForeignKey(nameof(ClientEntity.Nif))]
     public string ClientNif { get; set; }
 
+    [ForeignKey(nameof(ClientNif))]
+    public virtual ClientEntity Client { get; set; }
+
+    [Required]
     [Column("sell_date")]
     public DateTime SellDate { get; set; }
+
+    public virtual ICollection<SaleDetailEntity> SaleDetails { get; set; }
+
+    public SaleEntity()
+    {
+        SaleDetails = new List<SaleDetailEntity>();
+        SellDate = DateTime.Now;
+    }
 }

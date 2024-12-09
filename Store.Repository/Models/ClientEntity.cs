@@ -18,4 +18,11 @@ public class ClientEntity
     [Column("address")]
     [MaxLength(100)]
     public string Address { get; set; }
+
+    public virtual ICollection<SaleEntity> Sales { get; set; }
+
+    public ClientEntity()
+    {
+        Sales = new List<SaleEntity>();
+    }
 }
