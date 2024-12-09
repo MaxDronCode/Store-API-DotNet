@@ -15,13 +15,15 @@ public class SaleService : ISaleService
     private readonly IClientRepository _clientRepository;
     private readonly IProductRepository _productRepository;
     private readonly ILogger<SaleService> _logger;
+    private readonly IMongoSaleLogRepository _mongoSaleLogRepository;
 
-    public SaleService(ISaleRepository saleRepository, IClientRepository clientRepository, IProductRepository productRepository, ILogger<SaleService> logger)
+    public SaleService(ISaleRepository saleRepository, IClientRepository clientRepository, IProductRepository productRepository, ILogger<SaleService> logger, IMongoSaleLogRepository mongoSaleLogRepository)
     {
         _saleRepository = saleRepository;
         _clientRepository = clientRepository;
         _productRepository = productRepository;
         _logger = logger;
+        _mongoSaleLogRepository = mongoSaleLogRepository;
     }
 
     public async Task<Sale> CreateSale(Sale sale)
@@ -59,6 +61,20 @@ public class SaleService : ISaleService
             if (originalItem != null)
                 item.ProductName = originalItem.ProductName;
         }
+
+        var saleLog = new SaleLogEntity
+        {
+            SaleId = createdSale.Id,
+            ClientNif = createdSale.ClientNif,
+            SellDate = createdSaleEntity.SellDate,
+            Items = createdSale.Items.Select(i => new SaleDetailLog
+            {
+                ProductName = i.ProductName,
+                Quantity = i.Quantity
+            }).ToList()
+        };
+
+        await _mongoSaleLogRepository.AddSaleLog(saleLog);
 
         return createdSale;
     }
